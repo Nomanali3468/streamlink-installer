@@ -34,7 +34,7 @@ check_termux() {
 
 # Update packages
 update_packages() {
-    print_color "yellow" "Step 1/4: Updating package lists..."
+    print_color "yellow" "Step 1/5: Updating package lists..."
     pkg update -y && pkg upgrade -y
     if [ $? -ne 0 ]; then
         print_color "red" "Error: Failed to update packages. Please check your internet connection."
@@ -45,7 +45,7 @@ update_packages() {
 
 # Install dependencies
 install_dependencies() {
-    print_color "yellow" "Step 2/4: Installing essential dependencies..."
+    print_color "yellow" "Step 2/5: Installing essential dependencies..."
     pkg install -y python python-pip ffmpeg libxml2 libxslt clang make
     if [ $? -ne 0 ]; then
         print_color "red" "Error: Failed to install dependencies."
@@ -56,7 +56,7 @@ install_dependencies() {
 
 # Set up Python environment
 setup_python() {
-    print_color "yellow" "Step 3/4: Setting up Python environment..."
+    print_color "yellow" "Step 3/5: Setting up Python environment..."
     pip install --upgrade pip
     pip install setuptools wheel cython
     if [ $? -ne 0 ]; then
@@ -68,13 +68,28 @@ setup_python() {
 
 # Install Streamlink
 install_streamlink() {
-    print_color "yellow" "Step 4/4: Installing Streamlink..."
+    print_color "yellow" "Step 4/5: Installing Streamlink..."
     pip install streamlink
     if [ $? -ne 0 ]; then
         print_color "red" "Error: Failed to install Streamlink."
         exit 1
     fi
     print_color "green" "✓ Streamlink installed successfully."
+}
+
+# Download start.py script
+download_startpy() {
+    print_color "yellow" "Step 5/5: Downloading start.py script..."
+    curl -sSL -o start.py https://raw.githubusercontent.com/Nomanali3468/streamlink-installer/main/start.py
+    if [ $? -ne 0 ]; then
+        print_color "red" "Error: Failed to download start.py script."
+        exit 1
+    fi
+    print_color "green" "✓ start.py script downloaded successfully."
+    
+    # Make the script executable
+    chmod +x start.py
+    print_color "green" "✓ start.py is now executable."
 }
 
 # Success message
@@ -86,6 +101,7 @@ show_success() {
     print_color "green" "╚══════════════════════════════════════════╝"
     echo ""
     print_color "yellow" "To use Streamlink, type: streamlink [URL] [QUALITY]"
+    print_color "yellow" "To run the start.py script, type: python start.py"
     echo ""
     print_color "blue" "Version info:"
     streamlink --version
@@ -99,6 +115,7 @@ main() {
     install_dependencies
     setup_python
     install_streamlink
+    download_startpy
     show_success
 }
 
